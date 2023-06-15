@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Yandex_tasks</string>
+    <string name="save_todo">Сохранить</string>
+    <string name="importance">Важность</string>
+</resources>
