@@ -4,8 +4,9 @@ import android.app.Application
 import com.dmitri.yandex_tasks.util.repository.TodoItemsRepository
 
 class TaskApplication : Application() {
-    //todo appbar colorimportance
+
     val repository = TodoItemsRepository()
+    var showChecked: Boolean = true
 
     override fun onCreate() {
         super.onCreate()
