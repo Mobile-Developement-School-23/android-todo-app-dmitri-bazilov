@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/low"
+        android:title="Нет"/>
+    <item android:id="@+id/medium"
+        android:title="Средняя"/>
+    <item android:id="@+id/high"
+        android:title="Высокая"/>
+</menu>

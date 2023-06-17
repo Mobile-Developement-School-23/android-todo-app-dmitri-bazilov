@@ -5,10 +5,9 @@ import com.dmitri.yandex_tasks.util.repository.TodoItemsRepository
 
 class TaskApplication : Application() {
 
-    lateinit var todoItemsRepository: TodoItemsRepository
+    val repository = TodoItemsRepository()
 
     override fun onCreate() {
         super.onCreate()
-        todoItemsRepository = TodoItemsRepository()
     }
 }

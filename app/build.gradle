@@ -1,12 +1,12 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
     namespace 'com.dmitri.yandex_tasks'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.dmitri.yandex_tasks"
         minSdk 26
@@ -29,6 +29,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    dataBinding {
+        enabled = true
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 

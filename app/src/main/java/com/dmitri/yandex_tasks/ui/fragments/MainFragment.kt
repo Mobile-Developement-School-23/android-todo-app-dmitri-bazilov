@@ -1,31 +1,28 @@
 package com.dmitri.yandex_tasks.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.appcompat.content.res.AppCompatResources
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dmitri.yandex_tasks.R
-import com.dmitri.yandex_tasks.TaskApplication
 import com.dmitri.yandex_tasks.adapter.TodoItemsAdapter
-import com.dmitri.yandex_tasks.util.repository.TodoItemsRepository
+import com.dmitri.yandex_tasks.util.viewmodel.TodoItemsViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainFragment : Fragment() {
 
     lateinit var todoItemsRecyclerView: RecyclerView
-    lateinit var todoItemsRepository: TodoItemsRepository
+    private val todoItemsViewModel: TodoItemsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        todoItemsRepository = (requireActivity().application as TaskApplication).todoItemsRepository
-      }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,12 +38,12 @@ class MainFragment : Fragment() {
         val adapter = TodoItemsAdapter()
         todoItemsRecyclerView.adapter = adapter
         todoItemsRecyclerView.layoutManager = layoutManager
-        adapter.todoItemsList = todoItemsRepository.getItems(requireContext())
-        Log.i("INFO", "onViewCreated visit")
+        adapter.todoItemsList = todoItemsViewModel.repository.todoList.value!!
 
         var addButton = requireActivity().findViewById<FloatingActionButton>(R.id.addButton)
         addButton.setOnClickListener {
-            it.findNavController().navigate(R.id.action_mainFragment_to_addFragment)
+            it.findNavController()
+                .navigate(MainFragmentDirections.actionMainFragmentToAddFragment(null))
         }
     }
 }

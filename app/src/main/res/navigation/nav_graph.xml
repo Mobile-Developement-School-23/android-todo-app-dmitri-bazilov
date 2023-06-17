@@ -11,7 +11,8 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_addFragment"
-            app:destination="@id/addFragment" />
+            app:destination="@id/addFragment">
+        </action>
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -21,5 +22,10 @@
         <action
             android:id="@+id/action_addFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <argument
+            android:name="todoItem"
+            app:argType="com.dmitri.yandex_tasks.util.entity.TodoItem"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>
