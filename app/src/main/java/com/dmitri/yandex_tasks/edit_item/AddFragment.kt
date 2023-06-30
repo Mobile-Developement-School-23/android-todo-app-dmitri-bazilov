@@ -1,4 +1,4 @@
-package com.dmitri.yandex_tasks.ui.fragments
+package com.dmitri.yandex_tasks.edit_item
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -11,13 +11,16 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dmitri.yandex_tasks.R
 import com.dmitri.yandex_tasks.databinding.FragmentAddBinding
 import com.dmitri.yandex_tasks.util.entity.Priority
 import com.dmitri.yandex_tasks.util.entity.TodoItem
-import com.dmitri.yandex_tasks.util.viewmodel.TodoItemsViewModel
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -27,7 +30,7 @@ class AddFragment : Fragment() {
 
     private val DATE_PATTERN = "d MMMM uuuu"
 
-    private val todoItemsViewModel: TodoItemsViewModel by viewModels()
+    private val editTodoViewModel: EditTodoViewModel by viewModels()
 
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
@@ -117,29 +120,31 @@ class AddFragment : Fragment() {
                 } catch (_: DateTimeParseException) {
                 }
 
-                if (todoItem != null) {
-                    todoItem!!.description = description
-                    todoItem!!.priority = importance
-                    todoItem!!.deadline = deadline
-                    todoItem!!.modificationDate = LocalDate.now()
-                    todoItemsViewModel.update(todoItem!!)
-                } else {
-                    todoItemsViewModel.insert(
-                        TodoItem(
-                            UUID.randomUUID(),
-                            description,
-                            importance,
-                            deadline,
-                            false,
-                            LocalDate.now(),
-                            LocalDate.now()
+                lifecycleScope.launch {
+                    if (todoItem != null) {
+                        todoItem!!.description = description
+                        todoItem!!.priority = importance
+                        todoItem!!.deadline = deadline
+                        todoItem!!.modificationDate = LocalDate.now()
+                        editTodoViewModel.update(todoItem!!)
+                    } else {
+                        editTodoViewModel.insert(
+                            TodoItem(
+                                UUID.randomUUID(),
+                                description,
+                                importance,
+                                deadline,
+                                false,
+                                LocalDate.now(),
+                                LocalDate.now()
+                            )
                         )
-                    )
+                    }
+                    withContext(Main) {
+                        findNavController().navigate(AddFragmentDirections.actionAddFragmentToMainFragment())
+                    }
                 }
 
-
-
-                findNavController().navigate(AddFragmentDirections.actionAddFragmentToMainFragment())
             }
         }
     }
@@ -176,8 +181,12 @@ class AddFragment : Fragment() {
 
     private fun setDeleteButtonListener(todoItem: TodoItem) {
         binding.deleteButton.setOnClickListener {
-            todoItemsViewModel.delete(todoItem)
-            findNavController().navigate(AddFragmentDirections.actionAddFragmentToMainFragment())
+            lifecycleScope.launch {
+                editTodoViewModel.delete(todoItem)
+                withContext(Main) {
+                    findNavController().navigate(AddFragmentDirections.actionAddFragmentToMainFragment())
+                }
+            }
         }
     }
 }

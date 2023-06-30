@@ -5,10 +5,13 @@ import com.dmitri.yandex_tasks.util.repository.TodoItemsRepository
 
 class TaskApplication : Application() {
 
-    val repository = TodoItemsRepository()
+    lateinit var repository: TodoItemsRepository
     var showChecked: Boolean = true
 
     override fun onCreate() {
         super.onCreate()
+        repository = TodoItemsRepository(application = this)
     }
+
+    //todo refact all
 }

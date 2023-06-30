@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.dmitri.yandex_tasks.ui.fragments.MainFragment"
+        android:name="com.dmitri.yandex_tasks.main_screen.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/addFragment"
-        android:name="com.dmitri.yandex_tasks.ui.fragments.AddFragment"
+        android:name="com.dmitri.yandex_tasks.edit_item.AddFragment"
         android:label="fragment_add"
         tools:layout="@layout/fragment_add" >
         <action

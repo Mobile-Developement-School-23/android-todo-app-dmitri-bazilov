@@ -1,4 +1,4 @@
-package com.dmitri.yandex_tasks.ui.activities
+package com.dmitri.yandex_tasks.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
