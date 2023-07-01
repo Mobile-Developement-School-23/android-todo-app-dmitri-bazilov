@@ -21,7 +21,10 @@ class TodoListViewModel(application: Application) : AndroidViewModel(application
 
     private fun getListAdapter(): TodoItemsAdapter = TodoItemsAdapter(
         onCheckboxSwitch = {todoItem ->
-            viewModelScope.launch(Dispatchers.IO) { repository.changeDoneStatus(todoItem) }
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.changeDoneStatus(todoItem)
+                updateTodoList()
+            }
         },
         onItemClick = {todoItem, itemView ->
             Navigation.findNavController(itemView).navigate(MainFragmentDirections.actionMainFragmentToAddFragment(todoItem))
@@ -29,13 +32,13 @@ class TodoListViewModel(application: Application) : AndroidViewModel(application
     )
 
     fun updateTodoList() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val list = repository.fetchTodoList()
             Log.i("deb", list.toString())
             if (showDoneFlag)
                 todoListAdapter.submitList(list)
             else
-                todoListAdapter.submitList(list.filter { it.done })
+                todoListAdapter.submitList(list.filter { it.done.not() })
         }
     }
 

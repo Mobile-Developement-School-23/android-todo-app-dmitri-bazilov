@@ -85,6 +85,7 @@ class MainFragment : Fragment() {
             } else {
                 visButton.setImageResource(R.drawable.visibility_off_button)
             }
+            todoListViewModel.updateTodoList()
         }
     }
 }

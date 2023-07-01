@@ -8,12 +8,16 @@ import com.dmitri.yandex_tasks.TaskApplication
 import com.dmitri.yandex_tasks.database.AppDatabase
 import com.dmitri.yandex_tasks.database.dao.TodoDao
 import com.dmitri.yandex_tasks.database.entity.TodoEntity
+import com.dmitri.yandex_tasks.network.NetworkUtil
 import com.dmitri.yandex_tasks.network.entity.TodoApiItem
+import com.dmitri.yandex_tasks.network.retrofit.ApiClient
+import com.dmitri.yandex_tasks.network.retrofit.TodoApi
 import com.dmitri.yandex_tasks.util.entity.Priority
 import com.dmitri.yandex_tasks.util.entity.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import java.lang.Exception
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
@@ -22,34 +26,19 @@ class TodoItemsRepository(application: Application) {
 
     val todoList: List<TodoItem>
     val todoRoomDao: TodoDao
+    val todoRetrofitApi: TodoApi
+
+    val util: NetworkUtil
 
     init {
         val database = AppDatabase.getInstance(application.applicationContext)
         todoRoomDao = database.todoDao()
         todoList = listOf()
-    }
-
-    private fun getItems(): MutableList<TodoItem> {
-        return buildList {
-            val description = "Test Todo" + (1..20).random().toString()
-            val numberOfItems = 13
-            for (i in 0 until numberOfItems)
-                add(
-                    TodoItem(
-                        UUID.randomUUID(),
-                        description,
-                        Priority.values()[(0..2).random()],
-                        null,
-                        Random.nextBoolean(),
-                        LocalDate.now(),
-                        null
-                    )
-                )
-        }.toMutableList()
+        todoRetrofitApi = ApiClient().api
+        util = NetworkUtil(application)
     }
 
     fun List<TodoEntity>.toItemView(): List<TodoItem> = this.map { it.toItemView() }
-
 
     fun TodoEntity.toItemView(): TodoItem = TodoItem(
         id = id,
@@ -102,8 +91,21 @@ class TodoItemsRepository(application: Application) {
         return todoRoomDao.getAllTodos().map { it.toItemView() }
     }
 
-    suspend fun getItemsFromServer(): List<TodoItem> {
-        //todo server methods
+    suspend fun getItemsFromServer() {
+        //todo error handle
+        try {
+            val response = todoRetrofitApi.getList()
+            if (response.isSuccessful) {
+                todoRoomDao.insertItems(
+                    response.body()?.list?.map { it.toItemView().toEntity() } ?: listOf()
+                )
+                response.body()?.let { util.setRevision(it.revision) }
+            } else {
+                throw Exception()
+            }
+        } catch (ex: Exception) {
+
+        }
     }
 
     suspend fun syncWithServerList() {}
@@ -138,6 +140,6 @@ class TodoItemsRepository(application: Application) {
 
 
     suspend fun changeDoneStatus(todoItem: TodoItem) {
-        update(todoItem.copy(done = todoItem.done.not(), modificationDate = LocalDate.now()))
+        update(todoItem.copy(done = !todoItem.done, modificationDate = LocalDate.now()))
     }
 }

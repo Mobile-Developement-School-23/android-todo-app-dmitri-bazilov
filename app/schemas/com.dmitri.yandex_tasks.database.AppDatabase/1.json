@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d812f2c8c91011666054ab3895152dcb",
+    "entities": [
+      {
+        "tableName": "todo_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` BLOB NOT NULL, `description` TEXT NOT NULL, `priority` TEXT NOT NULL, `deadline` INTEGER, `done` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `modificationDate` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priority",
+            "columnName": "priority",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deadline",
+            "columnName": "deadline",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "done",
+            "columnName": "done",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationDate",
+            "columnName": "creationDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modificationDate",
+            "columnName": "modificationDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd812f2c8c91011666054ab3895152dcb')"
+    ]
+  }
+}

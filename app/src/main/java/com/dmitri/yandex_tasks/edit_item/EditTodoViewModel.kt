@@ -19,6 +19,6 @@ class EditTodoViewModel(application: Application): AndroidViewModel(application)
     }
 
     suspend fun delete(todoItem: TodoItem) {
-        repository.delete(todoItem)
+        repository.deleteItem(todoItem)
     }
 }

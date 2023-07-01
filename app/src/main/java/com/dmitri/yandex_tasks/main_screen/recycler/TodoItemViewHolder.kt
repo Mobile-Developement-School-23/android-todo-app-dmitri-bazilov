@@ -1,6 +1,7 @@
 package com.dmitri.yandex_tasks.main_screen.recycler
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -21,15 +22,8 @@ class TodoItemViewHolder(private val todoItemView: View) : ViewHolder(todoItemVi
         onCheckboxSwitch: (todoItem: TodoItem) -> Unit,
         onItemClick: (todoItem: TodoItem, view: View) -> Unit
     ) {
-
-        todoItemView.setOnClickListener {
-            onItemClick(todoItem, todoItemView)
-        }
-        checkbox.setOnCheckedChangeListener { _, _ ->
-            onCheckboxSwitch(todoItem)
-        }
-
         checkbox.isChecked = todoItem.done
+        Log.i("deb", "${todoItem.description} ${todoItem.done}")
         description.text = todoItem.description
         if (todoItem.done) {
             description.paintFlags = description.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -41,15 +35,22 @@ class TodoItemViewHolder(private val todoItemView: View) : ViewHolder(todoItemVi
                 priority.visibility = View.VISIBLE
                 priority.setImageResource(R.drawable.down_arrow)
             }
+
             Priority.MEDIUM -> {
                 priority.visibility = View.INVISIBLE
                 priority.setImageDrawable(null)
             }
+
             Priority.HIGH -> {
                 priority.visibility = View.VISIBLE
                 priority.setImageResource(R.drawable.up_arrow)
             }
         }
-
+        todoItemView.setOnClickListener {
+            onItemClick(todoItem, todoItemView)
+        }
+        checkbox.setOnCheckedChangeListener { _, _ ->
+            onCheckboxSwitch(todoItem)
+        }
     }
 }
