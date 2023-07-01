@@ -14,8 +14,8 @@ data class TodoItem(
     var modificationDate: LocalDate?
 ) : Serializable
 
-enum class Priority(val text: String) {
-    HIGH("Высокая"),
-    MEDIUM("Средняя"),
-    LOW("Нет")
+enum class Priority(val text: String, val apiRepr: String) {
+    HIGH("Высокая", "low"),
+    MEDIUM("Средняя", "basic"),
+    LOW("Нет", "important")
 }

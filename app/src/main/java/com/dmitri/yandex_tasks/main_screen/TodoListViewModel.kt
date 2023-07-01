@@ -3,8 +3,6 @@ package com.dmitri.yandex_tasks.main_screen
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.dmitri.yandex_tasks.TaskApplication
@@ -12,7 +10,6 @@ import com.dmitri.yandex_tasks.main_screen.recycler.TodoItemsAdapter
 import com.dmitri.yandex_tasks.util.entity.TodoItem
 import com.dmitri.yandex_tasks.util.repository.TodoItemsRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class TodoListViewModel(application: Application) : AndroidViewModel(application) {

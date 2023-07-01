@@ -8,6 +8,7 @@ import com.dmitri.yandex_tasks.TaskApplication
 import com.dmitri.yandex_tasks.database.AppDatabase
 import com.dmitri.yandex_tasks.database.dao.TodoDao
 import com.dmitri.yandex_tasks.database.entity.TodoEntity
+import com.dmitri.yandex_tasks.network.entity.TodoApiItem
 import com.dmitri.yandex_tasks.util.entity.Priority
 import com.dmitri.yandex_tasks.util.entity.TodoItem
 import kotlinx.coroutines.flow.Flow
@@ -70,24 +71,73 @@ class TodoItemsRepository(application: Application) {
         modificationDate = modificationDate?.toEpochDay()
     )
 
+    fun TodoItem.toApiItem(lastUpdatedBy: String = "name") = TodoApiItem(
+        id = id.toString(),
+        description = description,
+        priority = priority.apiRepr,
+        deadline = deadline?.toEpochDay(),
+        done = done,
+        creationDate = creationDate.toEpochDay(),
+        modificationDate = modificationDate?.toEpochDay() ?: LocalDate.now().toEpochDay(),
+        color = null,
+        lastUpdatedBy = lastUpdatedBy
+    )
+
+    fun TodoApiItem.toItemView() = TodoItem(
+        id = UUID.fromString(id),
+        description = description,
+        priority = when (priority) {
+            "low" -> Priority.LOW
+            "basic" -> Priority.MEDIUM
+            else -> Priority.HIGH
+        },
+        deadline = LocalDate.ofEpochDay(creationDate),
+        done = done,
+        creationDate = LocalDate.ofEpochDay(creationDate),
+        modificationDate = LocalDate.ofEpochDay(creationDate)
+    )
+
 
     suspend fun fetchTodoList(): List<TodoItem> {
         return todoRoomDao.getAllTodos().map { it.toItemView() }
     }
 
+    suspend fun getItemsFromServer(): List<TodoItem> {
+        //todo server methods
+    }
+
+    suspend fun syncWithServerList() {}
+
+
     suspend fun insert(todoItem: TodoItem) {
-        return todoRoomDao.insertTodoItem(todoItem.toEntity())
+        todoRoomDao.insertTodoItem(todoItem.toEntity())
+        insertInServer(todoItem)
+    }
+
+    private fun insertInServer(todoItem: TodoItem) {
+
     }
 
     suspend fun update(todoItem: TodoItem) {
         todoRoomDao.updateTodoItem(todoItem.toEntity())
+        updateOnServer(todoItem)
     }
 
-    suspend fun delete(todoItem: TodoItem) {
-        todoRoomDao.deleteTodoItem(todoItem.toEntity())
+    private fun updateOnServer(todoItem: TodoItem) {
+
     }
+
+    suspend fun deleteItem(todoItem: TodoItem) {
+        todoRoomDao.deleteTodoItem(todoItem.toEntity())
+        deleteItemOnServer(todoItem)
+    }
+
+    private fun deleteItemOnServer(todoItem: TodoItem) {
+
+    }
+
 
     suspend fun changeDoneStatus(todoItem: TodoItem) {
-
+        update(todoItem.copy(done = todoItem.done.not(), modificationDate = LocalDate.now()))
     }
 }
