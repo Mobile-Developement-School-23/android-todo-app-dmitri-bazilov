@@ -2,4 +2,7 @@
     <string name="app_name">Yandex_tasks</string>
     <string name="save_todo">Сохранить</string>
     <string name="importance">Важность</string>
+    <string name="type_todo">Что нужно сделать…</string>
+    <string name="input_date">Введите дату</string>
+    <string name="delete_todo">Удалить</string>
 </resources>

@@ -1,28 +1,54 @@
 package com.dmitri.yandex_tasks.util.repository
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import com.dmitri.yandex_tasks.R
+import androidx.lifecycle.MutableLiveData
 import com.dmitri.yandex_tasks.util.entity.Priority
 import com.dmitri.yandex_tasks.util.entity.TodoItem
 import java.time.LocalDate
+import java.util.UUID
+import kotlin.random.Random
 
 class TodoItemsRepository {
 
-    fun getItems(context: Context): List<TodoItem> {
-        return buildList {
-            val done = (0..1).random()
-            val checkbox = AppCompatResources.getDrawable(
-                context,
-                if (done == 0) R.drawable.unchecked_24
-                else R.drawable.checked_24
-            )
-            val description = "Test Todo"
+    val todoList: MutableLiveData<MutableList<TodoItem>> = MutableLiveData()
 
-            val numberOfItems = (1..10).random()
-            for (i in 0..numberOfItems)
-                add(TodoItem(i.toString(), checkbox!!, description, Priority.HIGH, null, done == 1, LocalDate.now(), null))
-        }
+    init {
+        todoList.value = getItems()
+    }
+
+    private fun getItems(): MutableList<TodoItem> {
+        return buildList {
+            val description = "Test Todo" + (1..20).random().toString()
+
+            val numberOfItems = 13
+            for (i in 0 until numberOfItems)
+                add(
+                    TodoItem(
+                        UUID.randomUUID(),
+                        description,
+                        Priority.values()[(0..2).random()],
+                        null,
+                        Random.nextBoolean(),
+                        LocalDate.now(),
+                        null
+                    )
+                )
+        }.toMutableList()
+    }
+
+    fun insert(todoItem: TodoItem) {
+        todoList.value!!.add(todoItem)
+    }
+
+    fun update(todoItem: TodoItem) {
+        val todo = todoList.value!!.find { it.id == todoItem.id }
+        todo!!.description = todoItem.description
+        todo.priority = todoItem.priority
+        todo.deadline = todoItem.deadline
+        todo.modificationDate = todoItem.modificationDate
+
+    }
+
+    fun delete(todoItem: TodoItem) {
+        todoList.value!!.remove(todoItem)
     }
 }
